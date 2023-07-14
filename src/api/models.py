@@ -3,11 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-# comments = db.Table(
-#     'comments',
-#     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-#     db.Column('discussion_id', db.Integer, db.ForeignKey('discussion.id'), primary_key=True)
-# )
 
 class User(db.Model):
     __tablename__= 'users'
@@ -45,22 +40,48 @@ class Discussion(db.Model):
         return f'<Discussion {self.id}>'
 
     def serialize(self):
-        return {
+        serialized_data = {
             "id": self.id,
             "title": self.title,
-            'discussion': self.discussion,
-            'createdBy': self.created_by.serialize(),
-            'comments' : [comment.serialize() for comment in self.disc_comments]
+            "discussion": self.discussion,
+            "createdBy": self.created_by.serialize(),
+            "comments": []
         }
+
+        serialized_comments = []
+        visited_comments = set()
+
+        for comment in self.disc_comments:
+            if comment.parent_id is None:
+                serialized_comment = comment.serialize()
+                serialized_comments.append(serialized_comment)
+                visited_comments.add(comment.id)
+                self.serialize_child_comments(comment, serialized_comment, visited_comments)
+
+        serialized_data["comments"] = serialized_comments
+
+        return serialized_data
+
+    def serialize_child_comments(self, comment, serialized_comment, visited_comments):
+        for child_comment in comment.children:
+            if child_comment.id not in visited_comments:
+                serialized_child_comment = child_comment.serialize()
+                serialized_comment["children"].append(serialized_child_comment)
+                visited_comments.add(child_comment.id)
+                self.serialize_child_comments(child_comment, serialized_child_comment, visited_comments)
+
 
 class Comment(db.Model):
     __tablename__='comments'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     discussion_id = db.Column(db.Integer, db.ForeignKey("discussions.id"), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=True)
     comment = db.Column(db.String(500), unique=False, nullable=False)
     
     created_by = db.relationship("User", back_populates="comments", foreign_keys=[user_id])
+    children = db.relationship('Comment', backref=db.backref('parent', remote_side=[id]))
+
 
     def __repr__(self):
         return f'<Comment {self.id}>'
@@ -70,5 +91,7 @@ class Comment(db.Model):
             "id": self.id,
             # "discussion_id": self.discussion_id,
             'created_by': self.created_by.serialize(),
+            "parent_id": self.parent_id,
             'comment' : self.comment,
+            'children': []
         }

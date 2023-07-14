@@ -1,3 +1,115 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+.discussion-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    gap: 1rem;
+}
+.discussion-card {
+    border-radius: 0.356rem;
+    background-color: #242424;
+    color: white;
+    width: 200px;
+}
+/* single */
+.discussion-info {
+    padding: 2rem 5rem;
+    background-color: #242424;
+    color: bisque;
+}
+.header {
+    padding: 0 2rem;
+}
+.dicussion-comment {
+    border: 1px solid bisque;
+    border-radius: 0.356rem;
+    padding: 1rem;
+    margin: 1;
+}
+.dicussion-sub-comment {
+    border: 1px solid bisque;
+    border-radius: 0.356rem;
+    padding: 1rem;
+    margin: 1rem;
+    margin-left: 4rem;
+}
+/* modal */
+.card {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: beige;
+    border: 1px solid bisque;
+    background-color: #242424;
+  }
+  .openModalDiv {
+    text-align: center;
+    width: 100%;
+  }
+  .openModalDiv, .card:is(:hover, :focus){
+    cursor: pointer;
+  }
+ 
+  
+  /* _____________ modal */
+  .modal-root {
+    z-index: 1000;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+  }
+  .my-modal {
+    display: block;
+    width: 600px;
+    background-color: #fff;
+    color: #242424;
+    padding: 0.5rem;
+    border-radius: 0.356rem;
+  }
+  .modal-header {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-bottom: 1px solid #584e4e;
+  }
+  .modal-header button {
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+    transform: scaleX(1.2);
+    border: none;
+    color: #6d6b6b;
+  }
+  .modal-header button:is(:hover, :active) {
+    color:#242424;
+    cursor: pointer;
+  }
+  .modal-footer {
+    border-top: 1px solid #584e4e;
+    padding: 0.2rem;
+    display: flex;
+    justify-content: center;
+  }
+  /* __________________________________________styles for the submit button  */
+  .modal-submit-btn{
+    padding: 0.5rem;
+    letter-spacing: 3px;
+    border-radius: 0.256rem;
+    background-color: orangered;
+    border: none;
+  }
+  .modal-submit-btn:is(:hover, :active){
+    background-color: rgb(163, 46, 3);
+    cursor: pointer;
+  }
+  .d-none {
+    display: none !important;
+  }
+  .no-scroll{
+      overflow: hidden !important;
+  }

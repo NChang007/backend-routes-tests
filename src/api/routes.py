@@ -49,6 +49,12 @@ def getAllDiscussions():
     discussions_dic = [discussion.serialize() for discussion in discussions]
     return jsonify(discussions_dic), 200
 
+# GET ONE DISCUSSION
+@api.route('/discussions/<int:id>', methods=['GET'])
+def getOneDiscussions(id):
+    discussion = Discussion.query.get(id)
+    return jsonify(discussion.serialize())
+
 # CREATE DISCUSSION
 @api.route('/discussions', methods=['POST'])
 def createDiscussion():
@@ -68,15 +74,18 @@ def createDiscussion():
 def createComment():
     user_id = 1
     discussion_id = 1
+    data = request.json
     body = request.get_json()
     new_comment = Comment (
         user_id=user_id,
         discussion_id=body["discussion_id"],
         comment=body["comment"],
+        parent_id=data.get("parent_id") or None
     )
     db.session.add(new_comment)
     db.session.commit()
-    return jsonify(new_comment.serialize()), 200
+    discussion = Discussion.query.get(body["discussion_id"])
+    return jsonify(discussion.serialize()), 200
 
 
 
