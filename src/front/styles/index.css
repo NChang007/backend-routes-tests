@@ -107,7 +107,7 @@
     background-color: rgb(163, 46, 3);
     cursor: pointer;
   }
-  .d-none {
+  .my-d-none {
     display: none !important;
   }
   .no-scroll{

@@ -10,19 +10,24 @@ class User(db.Model):
     name = db.Column(db.String(256), unique=False, nullable=False)
     email = db.Column(db.String(256), unique=True, nullable=False)
     password = db.Column(db.String(256), unique=False, nullable=False)
+    
 
     discussions = db.relationship("Discussion", back_populates="created_by", foreign_keys='Discussion.user_id')
     comments = db.relationship("Comment", back_populates="created_by", foreign_keys='Comment.user_id')
+
+    # favorite_discussions = db.relationship('Favorite', backref='user', lazy=True)
 
     def __repr__(self):
         return f'<User {self.id}>'
 
     def serialize(self):
+        # favorites = [favorite.serialize() for favorite in self.favorite_discussions]
+
         return {
             "id": self.id,
             "name": self.name,
             "email": self.email,
-            # do not serialize the password, its a security breach
+            # "favorites": favorites
         }
     
 class Discussion(db.Model):
@@ -89,9 +94,26 @@ class Comment(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            # "discussion_id": self.discussion_id,
-            'created_by': self.created_by.serialize(),
+            "discussion_id": self.discussion_id,
+            'createdBy': self.created_by.serialize(),
             "parent_id": self.parent_id,
             'comment' : self.comment,
             'children': []
+        }
+
+
+class Favorite(db.Model):
+    __tablename__='favorites'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    discussion_id = db.Column(db.Integer, db.ForeignKey("discussions.id"), nullable=False)
+
+    def __repr__(self):
+        return f'<Comment {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "discussion_id": self.discussion_id,
+            "user_id": self.user_id
         }
